@@ -24,3 +24,16 @@ excludes = ['zroot/ROOT/*']
 Matches are done with glob matching (via [minimatch](https://github.com/isaacs/minimatch)).
 
 It probably has some bugs. They may be serious. Use at your own risk.
+
+## Installation and Use
+
+I didn't publish it to npm, but you can install directly from github:
+
+```
+sudo npm install -g 'https://github.com/nicksellen/zfsbackup.git#v0.0.1'
+```
+
+And then run it:
+```
+zfsbackup path/to/config.toml
+```
