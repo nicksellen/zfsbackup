@@ -9,7 +9,7 @@ Another zfs backup tool. I made it just for my needs, which are:
 * not responsible for creating snapshots
 * incremental sends
 * runs in a modern nodejs with es2015 support
-* configable with a toml file
+* configurable with a toml file
 
 My config is:
 
