@@ -1,0 +1,5 @@
+sources = ['zdata', 'zroot']
+destination = 'zruby/backup'
+
+include = ['**']
+exclude = ['zroot/ROOT/*']
