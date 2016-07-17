@@ -53,7 +53,7 @@ function makeFilesystemPlans(filesystem, sourceSnapshots, backupFilesystem, back
           let lastSourceSnapshot = sourceSnapshots[sourceSnapshots.length - 1];
           plans.push({
             message: `sending incrementals from ${lastBackupSnapshot} to ${lastSourceSnapshot}`,
-            command: `zfs send -i ${filesystem}@${lastBackupSnapshot} ${filesystem}@${lastSourceSnapshot} | zfs recv ${backupFilesystem}`
+            command: `zfs send -i ${filesystem}@${lastBackupSnapshot} ${filesystem}@${lastSourceSnapshot} | zfs recv -F ${backupFilesystem}`
           });
         } else {
           plans.push({ status: 'all up to date!' });

@@ -30,7 +30,7 @@ It probably has some bugs. They may be serious. Use at your own risk.
 I didn't publish it to npm, but you can install directly from github:
 
 ```
-sudo npm install -g 'https://github.com/nicksellen/zfsbackup.git#v0.0.3'
+sudo npm install -g 'https://github.com/nicksellen/zfsbackup.git#v0.0.4'
 ```
 
 And then run it:
@@ -39,6 +39,10 @@ zfsbackup path/to/config.toml
 ```
 
 ## Changelog
+
+### 0.0.4
+
+* always use `-F` with `zfs recv`
 
 ### 0.0.3
 
