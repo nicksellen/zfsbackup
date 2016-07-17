@@ -30,10 +30,25 @@ It probably has some bugs. They may be serious. Use at your own risk.
 I didn't publish it to npm, but you can install directly from github:
 
 ```
-sudo npm install -g 'https://github.com/nicksellen/zfsbackup.git#v0.0.2'
+sudo npm install -g 'https://github.com/nicksellen/zfsbackup.git#v0.0.3'
 ```
 
 And then run it:
 ```
 zfsbackup path/to/config.toml
 ```
+
+## Changelog
+
+### 0.0.3
+
+* if source filesystme is mounted at / map it to /ROOT for the backup filesystem
+  (to prevent it trying to mount / in a non-empty directoy)
+
+### 0.0.2
+
+* set backup filesystem mountpoints based on source filesystem names + destination prefix
+
+### 0.0.1
+
+* initial release

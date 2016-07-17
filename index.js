@@ -58,6 +58,7 @@ executePlans(plans).then(() => {
   getMountpoints(Object.keys(sourceFilesystems))
     .filter(({ mountpoint }) => mountpoint)
     .forEach(({ filesystem, mountpoint }) => {
+      if (mountpoint === '/') mountpoint = '/ROOT';
       let backupFilesystem = join(destination, filesystem);
       let backupMountpoint = join('/', destination, mountpoint);
       execSync(`zfs set mountpoint=${backupMountpoint} ${backupFilesystem}`);
