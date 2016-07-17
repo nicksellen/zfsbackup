@@ -4,13 +4,28 @@ const { join } = require('path');
 const log = require('./log');
 const leftPad = require('left-pad'); // indispensable ;)
 
+let IGNORE_MOUNTPOINTS = ['-', 'none', 'legacy'];
+
 function listSnapshots(roots) {
   return execSync(
     `zfs list -H -r -t snapshot -o name ${roots.join(' ')}`,
     { encoding: 'utf8' }
-  ).trim().split('\n').map(fs => {
-    let [filesystem, snapshot] = fs.split('@');
+  ).trim().split('\n').map(line => {
+    let [filesystem, snapshot] = line.split('@');
     return { filesystem, snapshot };
+  });
+}
+
+function getMountpoints(filesystems) {
+  return execSync(
+    `zfs list -H -o name,mountpoint ${filesystems.join(' ')}`,
+    { encoding: 'utf8' }
+  ).trim().split('\n').map(line => {
+    let [filesystem, mountpoint] = line.split('\t');
+    if (IGNORE_MOUNTPOINTS.includes(mountpoint)) {
+      mountpoint = null;
+    }
+    return { filesystem, mountpoint };
   });
 }
 
@@ -24,8 +39,7 @@ function groupByFilesystem(snapshots) {
   }, {});
 }
 
-function makeFilesystemPlans(filesystem, sourceSnapshots, backupSnapshots, destination) {
-  let backupFilesystem = join(destination, filesystem);
+function makeFilesystemPlans(filesystem, sourceSnapshots, backupFilesystem, backupSnapshots) {
   let plans = [];
   if (sourceSnapshots.length === 0) {
     return;
@@ -75,11 +89,12 @@ function makePlans(sourceFilesystems, backupFilesystems, destination) {
   let plans = {};
   let filesystems = Object.keys(sourceFilesystems);
   filesystems.forEach(filesystem => {
+    let backupFilesystem = join(destination, filesystem);
     plans[filesystem] = makeFilesystemPlans(
       filesystem,
       sourceFilesystems[filesystem],
-      backupFilesystems[join(destination, filesystem)],
-      destination
+      backupFilesystem,
+      backupFilesystems[backupFilesystem]
     );
   });
   return plans;
@@ -141,6 +156,7 @@ module.exports = {
   check,
   groupByFilesystem,
   listSnapshots,
+  getMountpoints,
   makePlans,
   executePlans
 };

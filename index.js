@@ -2,14 +2,18 @@
 
 const minimatch = require('minimatch');
 const toml = require('toml');
-const log = require('./log');
 
 const { readFileSync } = require('fs');
+const { execSync } = require('child_process');
+const { join } = require('path');
+
+const log = require('./log');
 
 const {
   check,
   groupByFilesystem,
   listSnapshots,
+  getMountpoints,
   makePlans,
   executePlans
 } = require('./zfsbackup');
@@ -48,7 +52,18 @@ let backupFilesystems = groupByFilesystem(listSnapshots([destination]));
 let plans = makePlans(sourceFilesystems, backupFilesystems, destination);
 
 executePlans(plans).then(() => {
+
+  log.info('setting backup mountpoints');
+
+  getMountpoints(Object.keys(sourceFilesystems))
+    .filter(({ mountpoint }) => mountpoint)
+    .forEach(({ filesystem, mountpoint }) => {
+      let backupFilesystem = join(destination, filesystem);
+      let backupMountpoint = join('/', destination, mountpoint);
+      execSync(`zfs set mountpoint=${backupMountpoint} ${backupFilesystem}`);
+    });
+
   log.info('all complete!');
 }).catch(err => {
-  console.error(err);
+  log.error(err);
 });
