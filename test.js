@@ -116,5 +116,5 @@ test('makePlans can send incrementals', t => {
   t.equal(plans.a[0].message,
     'sending incrementals from a2 to a3', 'should have correct message');
   t.equal(plans.a[0].command,
-    'zfs send -i a@a2 a@a3 | zfs recv my/backup/a', 'should have correct command');
+    'zfs send -i a@a2 a@a3 | zfs recv -F my/backup/a', 'should have correct command');
 });
