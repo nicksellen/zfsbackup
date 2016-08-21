@@ -79,6 +79,45 @@ function makeFilesystemPlans(filesystem, sourceSnapshots, backupFilesystem, back
       plans.push({
         message: `send incrementals from ${firstSourceSnapshot} to ${lastSourceSnapshot}`,
         command: `zfs send -i ${filesystem}@${firstSourceSnapshot} ${filesystem}@${lastSourceSnapshot} | zfs recv -F ${backupFilesystem}`
+        run: (ctx, callback) => {
+
+          let incFrom = `${filesystem}@${firstSourceSnapshot}`;
+          let incTo = `${filesystem}@${lastSourceSnapshot}`;
+
+          // TODO: get incremental stream size first...
+
+          let send = spawn('zfs', ['send', '-i', incFrom, incTo]);
+          let recv = spawn('zfs', ['recv', '-F', backupFilesystem]);
+
+          let done = false;
+
+          let end = err => {
+            if (done) {
+              console.warn('end() called after end');
+              return;
+            }
+            done = true;
+            callback(err);
+          };
+
+          send.on('error', end);
+          recv.on('error', end);
+
+          send.on('close', code => {
+            if (code !== 0) {
+              end(new Error(`send exited with code ${code}`));
+            }
+          });
+
+          recv.on('close', code => {
+            if (code !== 0) {
+              end(new Error(`recv exited with code ${code}`));
+            }
+            send.stdin.end()
+          });
+
+          send.stdout.pipe(recv.stdin);
+        }
       });
     }
   }
