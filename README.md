@@ -30,7 +30,7 @@ It probably has some bugs. They may be serious. Use at your own risk.
 I didn't publish it to npm, but you can install directly from github:
 
 ```
-sudo npm install -g 'https://github.com/nicksellen/zfsbackup.git#v0.0.4'
+sudo npm install -g 'https://github.com/nicksellen/zfsbackup.git#v0.0.5'
 ```
 
 And then run it:
