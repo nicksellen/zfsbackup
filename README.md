@@ -40,6 +40,13 @@ zfsbackup path/to/config.toml
 
 ## Changelog
 
+### 0.0.5
+
+* breaking change! don't include first part of source filesystem in backup path
+    * with _source_ as **zroot** and _dest_ as **zbackup/backup**:
+        * _before change_: **zroot/foo/bar** backed up to **zbackup/backup/zroot/foo/bar**
+        * _after change_: **zroot/foo/bar** backed up to **zbackup/backup/foo/bar**
+
 ### 0.0.4
 
 * always use `-F` with `zfs recv`

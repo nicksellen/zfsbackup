@@ -15,7 +15,8 @@ const {
   listSnapshots,
   getMountpoints,
   makePlans,
-  executePlans
+  executePlans,
+  backupFilesystemFor
 } = require('./zfsbackup');
 
 const configPath = process.argv[2];
@@ -59,7 +60,7 @@ executePlans(plans).then(() => {
     .filter(({ mountpoint }) => mountpoint)
     .forEach(({ filesystem, mountpoint }) => {
       if (mountpoint === '/') mountpoint = '/ROOT';
-      let backupFilesystem = join(destination, filesystem);
+      let backupFilesystem = backupFilesystemFor(destination, filesystem);
       let backupMountpoint = join('/', destination, mountpoint);
       execSync(`zfs set mountpoint=${backupMountpoint} ${backupFilesystem}`);
     });

@@ -89,7 +89,7 @@ function makePlans(sourceFilesystems, backupFilesystems, destination) {
   let plans = {};
   let filesystems = Object.keys(sourceFilesystems);
   filesystems.forEach(filesystem => {
-    let backupFilesystem = join(destination, filesystem);
+    let backupFilesystem = backupFilesystemFor(destination, filesystem);
     plans[filesystem] = makeFilesystemPlans(
       filesystem,
       sourceFilesystems[filesystem],
@@ -100,6 +100,11 @@ function makePlans(sourceFilesystems, backupFilesystems, destination) {
   return plans;
 }
 
+function backupFilesystemFor(destination, filesystem) {
+  // remove the first part
+  const [_, ...rest] = filesystem.split('/')
+  return join(destination, ...rest)
+}
 
 function executePlans(plans) {
 
@@ -158,5 +163,6 @@ module.exports = {
   listSnapshots,
   getMountpoints,
   makePlans,
-  executePlans
+  executePlans,
+  backupFilesystemFor
 };

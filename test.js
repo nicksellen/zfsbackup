@@ -37,9 +37,9 @@ test('makePlans can create initial filesystems', t => {
   t.assert(plans.a, 'should create plans for a');
   t.equal(plans.a.length, 2, 'should be one plan')
   t.equal(plans.a[0].message,
-    'create backup filesystem [my/backup/a]', 'should have correct message');
+    'create backup filesystem [my/backup]', 'should have correct message');
   t.equal(plans.a[0].ensureFilesystemExists,
-    'my/backup/a', 'should set ensureFilesystemExists plan option');
+    'my/backup', 'should set ensureFilesystemExists plan option');
 });
 
 test('makePlans will report errors if there are no common snapshots', t => {
@@ -53,7 +53,7 @@ test('makePlans will report errors if there are no common snapshots', t => {
 
     // backup filesystems
     {
-      'my/backup/a': ['a1', 'a2']
+      'my/backup': ['a1', 'a2']
     },
 
     // destination prefix
@@ -80,7 +80,7 @@ test('makePlans can report everything is up to date', t => {
 
     // backup filesystems
     {
-      'my/backup/a': ['a1', 'a2']
+      'my/backup': ['a1', 'a2']
     },
 
     // destination prefix
@@ -104,7 +104,7 @@ test('makePlans can send incrementals', t => {
 
     // backup filesystems
     {
-      'my/backup/a': ['a1', 'a2']
+      'my/backup': ['a1', 'a2']
     },
 
     // destination prefix
@@ -116,5 +116,5 @@ test('makePlans can send incrementals', t => {
   t.equal(plans.a[0].message,
     'sending incrementals from a2 to a3', 'should have correct message');
   t.equal(plans.a[0].command,
-    'zfs send -i a@a2 a@a3 | zfs recv -F my/backup/a', 'should have correct command');
+    'zfs send -i a@a2 a@a3 | zfs recv -F my/backup', 'should have correct command');
 });
