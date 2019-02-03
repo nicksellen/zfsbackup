@@ -5,7 +5,6 @@ const toml = require('toml');
 
 const { readFileSync } = require('fs');
 const { execSync } = require('child_process');
-const { join } = require('path');
 
 const log = require('./log');
 
@@ -56,12 +55,40 @@ executePlans(plans).then(() => {
 
   log.info('setting backup mountpoints');
 
+  function hasMountpoint({ mountpoint }) {
+    return Boolean(mountpoint)
+  }
+
+  const backupMountpoints = {}
+
+  const altroots = {}
+  function getAltroot(filesystem) {
+    const zpool = filesystem.split('/')[0]
+    let altroot = altroots[zpool]
+    if (altroot) return altroot
+    altroot = execSync(`zpool get altroot -H -o value ${zpool}`, { encoding: 'utf8' }).trim()
+    if (altroot === '-') altroot = ''
+    altroots[zpool] = altroot
+    return altroot
+  }
+
+  getMountpoints(Object.keys(backupFilesystems))
+    .filter(hasMountpoint)
+    .forEach(({ filesystem, mountpoint }) => {
+      const altroot = getAltroot(filesystem)
+      mountpoint = mountpoint.substring(altroot.length)
+      if (mountpoint === '') mountpoint = '/'
+      backupMountpoints[filesystem] = mountpoint
+    })
+
   getMountpoints(Object.keys(sourceFilesystems))
-    .filter(({ mountpoint }) => mountpoint)
+    .filter(hasMountpoint)
     .forEach(({ filesystem, mountpoint }) => {
       // we assume they are importing the backup zpool with -R /somewhere so the mountpoints don't conflict
       let backupFilesystem = backupFilesystemFor(destination, filesystem);
-      execSync(`zfs set mountpoint=${mountpoint} ${backupFilesystem}`);
+      if (backupMountpoints[backupFilesystem] !== mountpoint) {
+        execSync(`zfs set mountpoint=${mountpoint} ${backupFilesystem}`);
+      }
     });
 
   log.info('all complete!');

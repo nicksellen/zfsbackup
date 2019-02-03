@@ -1,6 +1,6 @@
 {
   "name": "zfsbackup",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "zfs backup utility",
   "main": "zfsbackup.js",
   "bin": "index.js",
