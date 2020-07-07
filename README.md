@@ -30,7 +30,7 @@ It probably has some bugs. They may be serious. Use at your own risk.
 I didn't publish it to npm, but you can install directly from github:
 
 ```
-sudo npm install -g 'https://github.com/nicksellen/zfsbackup.git#v0.0.7'
+sudo npm install -g 'https://github.com/nicksellen/zfsbackup.git#v0.0.8'
 ```
 
 And then run it:
@@ -39,6 +39,10 @@ zfsbackup path/to/config.toml
 ```
 
 ## Changelog
+
+### 0.0.8
+
+* update dependencies to fix `(node:1099148) Warning: Accessing non-existent property 'padLevels' of module exports inside circular dependency`
 
 ### 0.0.7
 
