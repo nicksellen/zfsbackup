@@ -51,6 +51,25 @@ let backupFilesystems = groupByFilesystem(listSnapshots([destination]));
 
 let plans = makePlans(sourceFilesystems, backupFilesystems, destination);
 
+const errorPlans = {};
+for (const filesystem of Object.keys(plans)) {
+  const errors = plans[filesystem].filter(action => action.error);
+  if (errors.length > 0) {
+    errorPlans[filesystem] = errors;
+  }
+}
+
+if (Object.keys(errorPlans).length > 0) {
+  for (const filesystem of Object.keys(errorPlans)) {
+    const errors = errorPlans[filesystem];
+    for (const error of errors) {
+      console.log(filesystem, error.error);
+    }
+  }
+  console.log('There were errors, aborting!');
+  process.exit(1);
+}
+
 executePlans(plans).then(() => {
 
   log.info('setting backup mountpoints');
