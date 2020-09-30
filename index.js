@@ -70,13 +70,23 @@ if (Object.keys(errorPlans).length > 0) {
   process.exit(1);
 }
 
+// unmount backup filesystems
+// it needs to unmount to do zfs recv, but they need to be done in a particular order that if we leave it to zfs recv to do the unmounting it won't work...
+
+log.info('unmount backup filesystems');
+
+getMountpoints(Object.keys(sourceFilesystems))
+  .filter(hasMountpoint)
+  // longest first, so nested ones are unmount before parent ones, otherwise we get "target is busy" error
+  .sort((a, b) => b.mountpoint.length - a.mountpoint.length)
+  .forEach(({ filesystem, mountpoint }) => {
+    let backupFilesystem = backupFilesystemFor(destination, filesystem);
+    execSync(`zfs unmount -f ${backupFilesystem}`);
+  });
+
 executePlans(plans).then(() => {
 
   log.info('setting backup mountpoints');
-
-  function hasMountpoint({ mountpoint }) {
-    return Boolean(mountpoint)
-  }
 
   const backupMountpoints = {}
 
@@ -114,3 +124,8 @@ executePlans(plans).then(() => {
 }).catch(err => {
   log.error(err);
 });
+
+function hasMountpoint({ mountpoint }) {
+  return Boolean(mountpoint)
+}
+
