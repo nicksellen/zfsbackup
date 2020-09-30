@@ -40,6 +40,11 @@ zfsbackup path/to/config.toml
 
 ## Changelog
 
+### 0.0.9
+
+* unmount backup filesystems in reverse order (avoids "target is busy" error)
+* exit with error code if any of the plans are error plans
+
 ### 0.0.8
 
 * update dependencies to fix `(node:1099148) Warning: Accessing non-existent property 'padLevels' of module exports inside circular dependency`
