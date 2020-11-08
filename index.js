@@ -75,13 +75,12 @@ if (Object.keys(errorPlans).length > 0) {
 
 log.info('unmount backup filesystems');
 
-getMountpoints(Object.keys(sourceFilesystems))
+getMountpoints(Object.keys(backupFilesystems))
   .filter(hasMountpoint)
   // longest first, so nested ones are unmount before parent ones, otherwise we get "target is busy" error
   .sort((a, b) => b.mountpoint.length - a.mountpoint.length)
   .forEach(({ filesystem, mountpoint }) => {
-    let backupFilesystem = backupFilesystemFor(destination, filesystem);
-    execSync(`zfs unmount -f ${backupFilesystem}`);
+    execSync(`zfs unmount -f ${filesystem}`);
   });
 
 executePlans(plans).then(() => {

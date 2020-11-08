@@ -40,6 +40,10 @@ zfsbackup path/to/config.toml
 
 ## Changelog
 
+### 0.0.10
+
+* correctly unmount backup filesystems before backup
+
 ### 0.0.9
 
 * unmount backup filesystems in reverse order (avoids "target is busy" error)
